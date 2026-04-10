@@ -4,116 +4,107 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
-
-
-// Criar um novo nó com dados
-No* criarNo(int id, char* nome, float valor) {
+// Cria um novo nó vazio
+No* criar_no(void) {
     No* novo = (No*)malloc(sizeof(No));
-    if (novo != NULL) {
-        novo->info.id = id;
-        strcpy(novo->info.nome, nome);
-        novo->info.valor = valor;
+    if (novo) {
+        novo->info.retorno = NULL;
+        novo->info.total = 0;
         novo->prox = NULL;
     }
     return novo;
 }
 
-// Adicionar no final da lista
-No* adicionar(No* cabeca, int id, char* nome, float valor) {
-    No* novo = criarNo(id, nome, valor);
-    
-    if (novo == NULL) {
-        printf("Erro: memória insuficiente!\n");
-        return cabeca;
-    }
-    
-    // Se a lista estiver vazia
-    if (cabeca == NULL) {
-        return novo;
-    }
-    
-    // Percorre até o final
-    No* atual = cabeca;
-    while (atual->prox != NULL) {
-        atual = atual->prox;
-    }
-    
-    // Adiciona no final
-    atual->prox = novo;
-    return cabeca;
-}
-
-// Acessar do primeiro ao último (percorrer)
-void acessarTodos(No* cabeca) {
-    if (cabeca == NULL) {
-        printf("Lista vazia!\n");
+// Adiciona um novo nó no final da lista
+void adicionar_no(No** head, struct dados novo_dado) {
+    No* novo = (No*)malloc(sizeof(No));
+    if (!novo) {
+        printf("Erro ao alocar memória para novo nó\n");
         return;
     }
     
-    printf("\n=== Percorrendo a lista ===\n");
-    No* atual = cabeca;
-    int cont = 1;
+    // Copia os dados
+    novo->info.total = novo_dado.total;
+    novo->info.retorno = (char**)malloc(novo_dado.total * sizeof(char*));
     
+    if (!novo->info.retorno) {
+        printf("Erro ao alocar memória para retorno\n");
+        free(novo);
+        return;
+    }
+    
+    // Copia cada string individualmente
+    for (int i = 0; i < novo_dado.total; i++) {
+        novo->info.retorno[i] = (char*)malloc((strlen(novo_dado.retorno[i]) + 1) * sizeof(char));
+        if (novo->info.retorno[i]) {
+            strcpy(novo->info.retorno[i], novo_dado.retorno[i]);
+        }
+    }
+    
+    novo->prox = NULL;
+    
+    // Insere no final da lista
+    if (*head == NULL) {
+        *head = novo;
+    } else {
+        No* temp = *head;
+        while (temp->prox != NULL) {
+            temp = temp->prox;
+        }
+        temp->prox = novo;
+    }
+}
+
+// Libera toda a memória da lista
+void liberar_lista(No** head) {
+    No* atual = *head;
     while (atual != NULL) {
-        printf("Elemento %d:\n", cont);
-        printf("  ID: %d\n", atual->info.id);
-        printf("  Nome: %s\n", atual->info.nome);
-        printf("  Valor: %.2f\n", atual->info.valor);
-        printf("  ---\n");
+        No* prox = atual->prox;
         
-        atual = atual->prox;
-        cont++;
+        // Libera as strings
+        for (int i = 0; i < atual->info.total; i++) {
+            free(atual->info.retorno[i]);
+        }
+        free(atual->info.retorno);
+        free(atual);
+        
+        atual = prox;
     }
-    printf("Fim da lista (%d elementos)\n\n", cont-1);
+    *head = NULL;
 }
 
-// Destruir toda a lista
-No* destruirLista(No* cabeca) {
-    No* atual = cabeca;
-    int cont = 0;
+// Imprime todos os dados da lista
+void imprimir_lista(No* head) {
+    No* atual = head;
+    int num_entrada = 0;
     
     while (atual != NULL) {
-        No* temp = atual;
+        num_entrada++;
+        printf("\n=== Entrada %d (Total de itens: %d) ===\n", num_entrada, atual->info.total);
+        for (int i = 0; i < atual->info.total; i++) {
+            printf("  %s\n", atual->info.retorno[i]);
+        }
         atual = atual->prox;
-        free(temp);
-        cont++;
+    }
+}
+
+// Imprime um dado específico da lista pelo índice
+void imprimir_dado_especifico(No* head, int indice) {
+    No* atual = head;
+    int count = 0;
+    
+    while (atual != NULL && count < indice) {
+        atual = atual->prox;
+        count++;
     }
     
-    printf("Lista destruída! %d elementos liberados.\n", cont);
-    return NULL;  // Retorna NULL para a nova cabeça
-}
-
-#if 0
-// Função principal
-int main() {
-    No* lista = NULL;  // Inicia com lista vazia
-    
-    printf("=== CRIANDO LISTA ENCADEADA SIMPLES ===\n\n");
-    
-    // Adicionando elementos no final
-    lista = adicionar(lista, 1, "João", 10.5);
-    lista = adicionar(lista, 2, "Maria", 20.3);
-    lista = adicionar(lista, 3, "Pedro", 15.8);
-    lista = adicionar(lista, 4, "Ana", 30.0);
-    
-    // Acessando do primeiro ao último
-    acessarTodos(lista);
-    
-    // Destruindo a lista
-    lista = destruirLista(lista);
-    
-    // Tentando acessar depois de destruir
-    acessarTodos(lista);
-    
-    return 0;
-}
-
-#endif
-void print_items(){
-
- API_PARSE_S items = {"Maycon", 1234};
- printf("items[%s] [%d]\n", items.name, items.id);
-
+    if (atual != NULL) {
+        printf("\n=== Dado %d (Total de itens: %d) ===\n", indice, atual->info.total);
+        for (int i = 0; i < atual->info.total; i++) {
+            printf("  %s\n", atual->info.retorno[i]);
+        }
+    } else {
+        printf("Índice %d não encontrado na lista\n", indice);
+    }
 }

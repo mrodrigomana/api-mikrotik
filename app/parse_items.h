@@ -1,23 +1,23 @@
 #ifndef __PARSE_TEMS_H
 #define __PARSE_TEMS_H
 
-// Struct genérica para dados (pode ser alterada conforme necessidade)
-typedef struct {
-    int id;
-    char nome[50];
-    float valor;
-} Dado;
+// Struct genérica para dados
+typedef struct dados {
+    char **retorno;  // Array de strings com os valores
+    int total;       // Quantidade de itens neste retorno
+}DATA;
 
 // Nó da lista
 typedef struct No {
-    Dado info;          // Dado genérico
-    struct No* prox;    // Ponteiro para o próximo
+    DATA info;          // Dado genérico
+    struct No* prox;            // Ponteiro para o próximo
 } No;
 
-typedef struct api_parse_s{
-    char name[32];
-    int id;
-}API_PARSE_S;
+// Funções da lista encadeada
+No* criar_no(void);
+void adicionar_no(No** head, DATA novo_dado);
+void liberar_lista(No** head);
+void imprimir_lista(No* head);
+void imprimir_dado_especifico(No* head, int indice);
 
-void print_items();
 #endif
