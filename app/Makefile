@@ -28,7 +28,7 @@ all: meuapp
 	@echo "Biblioteca usada: $(LIB_PATH)/librouteros.so"
 
 meuapp: main.c
-	@gcc main.c -I$(INC_PATH) -L$(LIB_PATH) -Wl,-rpath,$(RPATH) -lrouteros -o $(APP_NAME_PROJECT) parse_items.c
+	@gcc main.c -I$(INC_PATH) -L$(LIB_PATH) -Wl,-rpath,$(RPATH) -lrouteros -o $(APP_NAME_PROJECT) parse_items.c options.c
 
 clean:
 	@rm -f $(APP_NAME_PROJECT)

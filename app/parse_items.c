@@ -81,7 +81,8 @@ void imprimir_lista(No* head) {
     
     while (atual != NULL) {
         num_entrada++;
-        printf("\n=== Entrada %d (Total de itens: %d) ===\n", num_entrada, atual->info.total);
+        if(DEBUG)
+            printf("\n=== Entrada %d (Total de itens: %d) ===\n", num_entrada, atual->info.total);
         for (int i = 0; i < atual->info.total; i++) {
             printf("  %s\n", atual->info.retorno[i]);
         }
@@ -90,7 +91,7 @@ void imprimir_lista(No* head) {
 }
 
 // Imprime um dado específico da lista pelo índice
-void imprimir_dado_especifico(No* head, int indice) {
+void imprimir_dado_especifico(No* head, int indice, int item) {
     No* atual = head;
     int count = 0;
     
@@ -100,9 +101,15 @@ void imprimir_dado_especifico(No* head, int indice) {
     }
     
     if (atual != NULL) {
-        printf("\n=== Dado %d (Total de itens: %d) ===\n", indice, atual->info.total);
-        for (int i = 0; i < atual->info.total; i++) {
-            printf("  %s\n", atual->info.retorno[i]);
+        if(DEBUG)
+            printf("\n=== Dado %d (Total de itens: %d) ===\n", indice, atual->info.total);
+        if(item>=0){
+             printf("  %s\n", atual->info.retorno[item]);
+        }else{
+            for (int i = 0; i < atual->info.total; i++) {
+                
+                printf("  %s\n", atual->info.retorno[i]);
+            }
         }
     } else {
         printf("Índice %d não encontrado na lista\n", indice);
